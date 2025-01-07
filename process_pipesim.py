@@ -45,9 +45,18 @@ def one_time_pipesim(input_file_path, main_path):
             print(f"Unexpected output format: {result.stdout}")
             os.chdir(original_path)
             continue
+        assert "ms" in output_lines[0] or "s" in output_lines[0]
+        assert "ms" in output_lines[1] or "s" in output_lines[1]
+        if "ms" in output_lines[0]:
+            init_time = float(output_lines[0].split(":")[1].strip().replace("ms", "")) / 1000
+        else:
+            init_time = float(output_lines[0].split(":")[1].strip().replace("s", ""))
 
-        init_time = float(output_lines[0].split(":")[1].strip().replace("ms", "")) / 1000
-        run_time = float(output_lines[1].split(":")[1].strip().replace("ms", "")) / 1000
+        if "ms" in output_lines[1]:
+            run_time = float(output_lines[1].split(":")[1].strip().replace("ms", "")) / 1000
+        else:
+            run_time = float(output_lines[1].split(":")[1].strip().replace("s", ""))
+
         virtual_time = float(output_lines[2].split(":")[1].strip())
 
         # Change back to the original directory
