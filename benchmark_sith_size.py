@@ -74,21 +74,21 @@ def one_time_process(setting_list, main_path):
 if __name__ == "__main__":
     main_path = "../mgpusim/samples"
 
-    # setting_list = [["relu", "-length", 2 ** i] for i in range(10, 20)]
-    # one_time_process(setting_list, main_path)
-    # setting_list = [["fir", "-length", 2 ** i] for i in range(7, 17)]
-    # one_time_process(setting_list, main_path)
-    # setting_list = [["matrixtranspose", "-width", 2 ** i] for i in range(2, 10)]
-    # one_time_process(setting_list, main_path)
-    # setting_list = [["spmv", "-dim", 2 ** i] for i in range(4, 12)]
-    # one_time_process(setting_list, main_path)
-    # setting_list = [["kmeans", "-points", 2 ** i] for i in range(3, 11)]
-    # one_time_process(setting_list, main_path)
-    # setting_list = [["matrixmultiplication", "-x", 2 ** i] for i in range(3, 13)]
-    # one_time_process(setting_list, main_path)
-    # setting_list = [["bfs", "-node", 2 ** i] for i in range(5, 15)]
-    # one_time_process(setting_list, main_path)
-    # setting_list = [["pagerank", "-node", 2 ** i] for i in range(1, 9)]
-    # one_time_process(setting_list, main_path)
+    setting_list = [["relu", "-length", 2 ** i] for i in range(10, 20)]
+    one_time_process(setting_list, main_path)
+    setting_list = [["fir", "-length", 2 ** i] for i in range(7, 17)]
+    one_time_process(setting_list, main_path)
+    setting_list = [["matrixtranspose", "-width", 2 ** i] for i in range(2, 10)]
+    one_time_process(setting_list, main_path)
+    setting_list = [["spmv", "-dim", 2 ** i] for i in range(4, 12)]
+    one_time_process(setting_list, main_path)
+    setting_list = [["kmeans", "-points", 2 ** i] for i in range(3, 11)]
+    one_time_process(setting_list, main_path)
+    setting_list = [["matrixmultiplication", "-x", 2 ** i] for i in range(3, 13)]
+    one_time_process(setting_list, main_path)
+    setting_list = [["bfs", "-node", 2 ** i] for i in range(5, 15)]
+    one_time_process(setting_list, main_path)
+    setting_list = [["pagerank", "-node", 2 ** i] for i in range(1, 9)]
+    one_time_process(setting_list, main_path)
     setting_list = [["pagerank", "-iterations", 2 ** i] for i in range(0, 10)]
     one_time_process(setting_list, main_path)
