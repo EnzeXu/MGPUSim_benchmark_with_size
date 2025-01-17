@@ -98,7 +98,7 @@ def one_time_process_time_only(setting_list, main_path, repeat_time=3):
         original_path = os.getcwd()
         job_path = os.path.join(main_path, job_name)
         # os.chdir(job_path)
-        command = f"{job_path}/{job_name} {argparse_flag}={params}"
+        command = f"{job_path}/{job_name} {argparse_flag}={params} -timing"
         time_command = f"time {command}"  # Using /usr/bin/time for better control
         # command = f"./{job_name} {argparse_flag}={params}"
         print(f"[{idx + 1:02d}/{len(setting_list):02d}] Command: {command}")
