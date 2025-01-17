@@ -88,7 +88,7 @@ def parse_time_output(time_output):
     return time_real, time_user, time_sys
 
 
-def one_time_process_time_only(setting_list, main_path, repeat_time=3):
+def one_time_process_time_only(setting_list, main_path, repeat_time=1):
     for idx, sub_list in enumerate(setting_list):
         # Extract job details
         job_name, argparse_flag, params = sub_list
