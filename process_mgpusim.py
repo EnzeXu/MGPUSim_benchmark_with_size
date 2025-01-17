@@ -121,7 +121,7 @@ def one_time_process_time_only(setting_list, main_path, repeat_time=3):
                 executable="/bin/bash"  # Ensure Bash is used for the time command
             )
 
-            print(f"result.stderr: '{result.stderr}'")
+            # print(f"result.stderr: '{result.stderr}'")
             time_terminal_real, time_terminal_user, time_terminal_sys = parse_time_output(result.stderr)  # Extract 'real' time
             records_csv_path = "./mgpusim_records_time_only.csv"
             record_row = [job_name, argparse_flag, params, time_python, time_terminal_real, time_terminal_user, time_terminal_sys]
