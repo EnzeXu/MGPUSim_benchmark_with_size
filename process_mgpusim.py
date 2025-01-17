@@ -110,6 +110,7 @@ def one_time_process_time_only(setting_list, main_path):
 
         # Calculate execution times
         time_python = end_time - start_time
+        print(f"result.stderr: '{result.stderr}'")
         time_terminal = parse_time_output(result.stderr)  # Extract 'real' time
 
 
