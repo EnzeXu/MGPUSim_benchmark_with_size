@@ -134,6 +134,7 @@ def one_time_pipesim_time_only(input_file_path, main_path, repeat_time=3):
 
             # Write the record to the file
             record = f"{job_name},{argparse_flag},{params},{time_python},{time_terminal_real},{time_terminal_user},{time_terminal_sys}\n"
+            print(record)
             with open(records_file, "a") as f:
                 f.write(record)
 
