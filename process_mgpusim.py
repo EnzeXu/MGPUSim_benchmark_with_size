@@ -92,7 +92,7 @@ def one_time_process_time_only(setting_list, main_path):
         job_path = os.path.join(main_path, job_name)
         # os.chdir(job_path)
         command = f"{job_path}/{job_name} {argparse_flag}={params}"
-        time_command = f"/usr/bin/time -p {command}"  # Using /usr/bin/time for better control
+        time_command = f"time {command}"  # Using /usr/bin/time for better control
         # command = f"./{job_name} {argparse_flag}={params}"
         print(f"[{idx + 1:02d}/{len(setting_list):02d}] Time Command: {time_command}")
         # subprocess.run(command, shell=True, check=True)
