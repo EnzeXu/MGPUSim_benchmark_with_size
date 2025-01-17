@@ -9,7 +9,7 @@ def one_time_pipesim(input_file_path, main_path):
         file_list = [line.strip() for line in file if line.strip()]
 
     # Prepare the output file
-    records_file = "pipesim_records.txt"
+    records_file = "pipesim_records.csv"
     if not os.path.exists(records_file):
         with open(records_file, "w") as f:
             f.write("job_name,argparse_flag,params,init_time,run_time,virtual_time\n")
