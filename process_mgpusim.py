@@ -70,18 +70,25 @@ def one_time_process(setting_list, main_path):
         # Step 5: Print completion message
         print(f"[{idx + 1:02d}/{len(setting_list):02d}] Done: {sub_list}\n")
 
+
 def parse_time_output(time_output):
-    """Parse the output of the `time` command to extract the 'real' time."""
-    match = re.search(r"real\s+(\d+)m([\d.]+)s", time_output)
-    if match:
-        minutes = int(match.group(1))
-        seconds = float(match.group(2))
-        return minutes * 60 + seconds
-    return None
+    """Parse the output of the `time` command to extract 'real', 'user', and 'sys' times."""
+
+    def parse_time(label):
+        match = re.search(fr"{label}\s+(\d+)m([\d.]+)s", time_output)
+        if match:
+            minutes, seconds = int(match.group(1)), float(match.group(2))
+            return minutes * 60 + seconds
+        return None
+
+    time_real = parse_time("real")
+    time_user = parse_time("user")
+    time_sys = parse_time("sys")
+
+    return time_real, time_user, time_sys
 
 
-def one_time_process_time_only(setting_list, main_path):
-
+def one_time_process_time_only(setting_list, main_path, repeat_time=3):
     for idx, sub_list in enumerate(setting_list):
         # Extract job details
         job_name, argparse_flag, params = sub_list
@@ -94,38 +101,37 @@ def one_time_process_time_only(setting_list, main_path):
         command = f"{job_path}/{job_name} {argparse_flag}={params}"
         time_command = f"time {command}"  # Using /usr/bin/time for better control
         # command = f"./{job_name} {argparse_flag}={params}"
+        print(f"[{idx + 1:02d}/{len(setting_list):02d}] Command: {command}")
         print(f"[{idx + 1:02d}/{len(setting_list):02d}] Time Command: {time_command}")
         # subprocess.run(command, shell=True, check=True)
 
-        start_time = time.time()
-        result = subprocess.run(
-            time_command,
-            shell=True,
-            check=True,
-            capture_output=True,
-            text=True,
-            executable="/bin/bash"  # Ensure Bash is used for the time command
-        )
-        end_time = time.time()
+        for seed in range(repeat_time):
+            start_time = time.time()
+            subprocess.run(command, shell=True, check=True)
+            end_time = time.time()
 
-        # Calculate execution times
-        time_python = end_time - start_time
-        print(f"result.stderr: '{result.stderr}'")
-        time_terminal = parse_time_output(result.stderr)  # Extract 'real' time
+            time_python = end_time - start_time
 
+            result = subprocess.run(
+                time_command,
+                shell=True,
+                check=True,
+                capture_output=True,
+                text=True,
+                executable="/bin/bash"  # Ensure Bash is used for the time command
+            )
 
+            print(f"result.stderr: '{result.stderr}'")
+            time_terminal_real, time_terminal_user, time_terminal_sys = parse_time_output(result.stderr)  # Extract 'real' time
+            records_csv_path = "./mgpusim_records_time_only.csv"
+            record_row = [job_name, argparse_flag, params, time_python, time_terminal_real, time_terminal_user, time_terminal_sys]
+            file_exists = os.path.isfile(records_csv_path)
 
-        # calculate the executing time using Python built-in time and terminal method: time_python, time_terminal
-
-        records_csv_path = "./mgpusim_records_time_only.csv"
-        record_row = [job_name, argparse_flag, params, time_python, time_terminal]
-        file_exists = os.path.isfile(records_csv_path)
-
-        with open(records_csv_path, "a", newline="") as records_file:
-            writer = csv.writer(records_file)
-            if not file_exists:
-                writer.writerow(["job_name", "argparse_flag", "params", "time_python", "time_terminal"])
-            writer.writerow(record_row)
+            with open(records_csv_path, "a", newline="") as records_file:
+                writer = csv.writer(records_file)
+                if not file_exists:
+                    writer.writerow(["job_name", "argparse_flag", "params", "time_python", "time_terminal_real", "time_terminal_user", "time_terminal_sys"])
+                writer.writerow(record_row)
 
         # Step 5: Print completion message
         print(f"[{idx + 1:02d}/{len(setting_list):02d}] Done: {sub_list}\n")
