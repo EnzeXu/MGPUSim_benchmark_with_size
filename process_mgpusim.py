@@ -160,14 +160,15 @@ if __name__ == "__main__":
     # one_time_process(setting_list, main_path)
 
     setting_list = []
+    setting_list += [["bfs", "-node", 2 ** i] for i in range(5, 15)]
+    setting_list += [["fir", "-length", 2 ** i] for i in range(7, 17)]
+    setting_list += [["kmeans", "-points", 2 ** i] for i in range(3, 11)]
+    setting_list += [["matrixmultiplication", "-x", 2 ** i] for i in range(3, 13)]
+    setting_list += [["matrixtranspose", "-width", 2 ** i] for i in range(2, 10)]
+    setting_list += [["pagerank", "-iterations", 2 ** i] for i in range(0, 9)]
+    setting_list += [["pagerank", "-node", 2 ** i] for i in range(1, 9)]
     setting_list += [["relu", "-length", 2 ** i] for i in range(10, 20)]
-    # setting_list += [["fir", "-length", 2 ** i] for i in range(7, 17)]
-    # setting_list += [["matrixtranspose", "-width", 2 ** i] for i in range(2, 10)]
-    # setting_list += [["spmv", "-dim", 2 ** i] for i in range(4, 12)]
-    # setting_list += [["kmeans", "-points", 2 ** i] for i in range(3, 11)]
-    # setting_list += [["matrixmultiplication", "-x", 2 ** i] for i in range(3, 13)]
-    # setting_list += [["bfs", "-node", 2 ** i] for i in range(5, 15)]
-    # setting_list += [["pagerank", "-node", 2 ** i] for i in range(1, 9)]
-    # setting_list += [["pagerank", "-iterations", 2 ** i] for i in range(0, 10)]
+    setting_list += [["spmv", "-dim", 2 ** i] for i in range(4, 12)]
+
     print(f"setting list count: {len(setting_list)}")
     one_time_process_time_only(setting_list, main_path)
