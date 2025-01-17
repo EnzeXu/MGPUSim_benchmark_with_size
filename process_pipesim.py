@@ -85,7 +85,7 @@ def one_time_pipesim_time_only(input_file_path, main_path, repeat_time=3):
     records_file = "pipesim_records_time_only.csv"
     if not os.path.exists(records_file):
         with open(records_file, "w") as f:
-            f.write("job_name,argparse_flag,params,time_python,time_terminal_real,time_terminal_user,time_terminal_sys\n")
+            f.write("job_name,argparse_flag,params,time_python,time_terminal_real,time_terminal_user,time_terminal_sys,init_time,run_time,virtual_time\n")
 
     # Save the original directory
     original_path = os.getcwd()
@@ -104,22 +104,42 @@ def one_time_pipesim_time_only(input_file_path, main_path, repeat_time=3):
         job_name, argparse_flag, params = match.groups()
         argparse_flag = f"-{argparse_flag}"  # Add "-" before the argparse_flag
 
-        # Change to the main path
-        os.chdir(main_path)
+
 
         # Run the go command
-        command = f"go run pipesim/main.go -database {one_str} -config=config.json"
+        # command = f"go run pipesim/main.go -database {one_str} -config=config.json"
+        command = f"./pipesim/pipesim -database {one_str} -config=config.json"
         time_command = f"time {command}"
         print(f"[{index:02d}/{total_files:02d}] Command: {command}")
         print(f"[{index:02d}/{total_files:02d}] Time Command: {time_command}")
 
         for seed in range(repeat_time):
-
+            os.chdir(main_path)
             start_time = time.time()
-            subprocess.run(command, shell=True, check=True)
+            result = subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, text=True)
             end_time = time.time()
 
             time_python = end_time - start_time
+
+            # Parse the output
+            output_lines = result.stdout.strip().split("\n")
+            if len(output_lines) < 3:
+                print(f"Unexpected output format: {result.stdout}")
+                os.chdir(original_path)
+                continue
+            assert "ms" in output_lines[0] or "s" in output_lines[0]
+            assert "ms" in output_lines[1] or "s" in output_lines[1]
+            if "ms" in output_lines[0]:
+                init_time = float(output_lines[0].split(":")[1].strip().replace("ms", "")) / 1000
+            else:
+                init_time = float(output_lines[0].split(":")[1].strip().replace("s", ""))
+
+            if "ms" in output_lines[1]:
+                run_time = float(output_lines[1].split(":")[1].strip().replace("ms", "")) / 1000
+            else:
+                run_time = float(output_lines[1].split(":")[1].strip().replace("s", ""))
+
+            virtual_time = float(output_lines[2].split(":")[1].strip())
 
             result = subprocess.run(
                 time_command,
@@ -133,13 +153,14 @@ def one_time_pipesim_time_only(input_file_path, main_path, repeat_time=3):
             time_terminal_real, time_terminal_user, time_terminal_sys = parse_time_output(result.stderr)
 
             # Write the record to the file
-            record = f"{job_name},{argparse_flag},{params},{time_python},{time_terminal_real},{time_terminal_user},{time_terminal_sys}\n"
+            record = f"{job_name},{argparse_flag},{params},{time_python},{time_terminal_real},{time_terminal_user},{time_terminal_sys},{init_time},{run_time},{virtual_time}\n"
             print(record)
+            os.chdir(original_path)
             with open(records_file, "a") as f:
                 f.write(record)
 
         # Print finish message and an empty row
-        os.chdir(original_path)
+
         print(f"[{index:02d}/{total_files:02d}] Finish: {one_str}")
         print()
 
