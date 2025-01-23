@@ -59,7 +59,7 @@ def one_time_process(setting_list, main_path):
         kernel_time = float(metrics_lines[1].split(",")[-1].strip())
         total_time = float(metrics_lines[2].split(",")[-1].strip())
 
-        records_csv_path = "./mgpusim_records.csv"  # os.path.join(traces_dir, "records.csv")
+        records_csv_path = f"./mgpusim_records_{get_now_string()}.csv"  # os.path.join(traces_dir, "records.csv")
         record_row = [job_name, argparse_flag, params, trace_size, kernel_time, total_time]
         file_exists = os.path.isfile(records_csv_path)
 

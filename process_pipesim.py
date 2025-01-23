@@ -3,6 +3,7 @@ import re
 import time
 import subprocess
 
+from utils import get_now_string
 from process_mgpusim import parse_time_output
 
 def one_time_pipesim(input_file_path, main_path):
@@ -11,7 +12,7 @@ def one_time_pipesim(input_file_path, main_path):
         file_list = [line.strip() for line in file if line.strip()]
 
     # Prepare the output file
-    records_file = "pipesim_records.csv"
+    records_file = f"pipesim_records_{get_now_string()}.csv"
     if not os.path.exists(records_file):
         with open(records_file, "w") as f:
             f.write("job_name,argparse_flag,params,init_time,run_time,virtual_time\n")
@@ -82,7 +83,7 @@ def one_time_pipesim_time_only(input_file_path, main_path, repeat_time=3):
         file_list = [line.strip() for line in file if line.strip()]
 
     # Prepare the output file
-    records_file = "pipesim_records_time_only.csv"
+    records_file = f"pipesim_records_time_only_{get_now_string()}.csv"
     if not os.path.exists(records_file):
         with open(records_file, "w") as f:
             f.write("job_name,argparse_flag,params,time_python,time_terminal_real,time_terminal_user,time_terminal_sys,init_time,run_time,virtual_time\n")
