@@ -91,6 +91,7 @@ def parse_time_output(time_output):
 
 
 def one_time_process_time_only(setting_list, main_path, repeat_time=3):
+    timestring = get_now_string()
     for idx, sub_list in enumerate(setting_list):
         # Extract job details
         job_name, argparse_flag, params = sub_list
@@ -125,7 +126,7 @@ def one_time_process_time_only(setting_list, main_path, repeat_time=3):
 
             # print(f"result.stderr: '{result.stderr}'")
             time_terminal_real, time_terminal_user, time_terminal_sys = parse_time_output(result.stderr)  # Extract 'real' time
-            records_csv_path = f"./mgpusim_records_time_only_{get_now_string()}.csv"
+            records_csv_path = f"./mgpusim_records_time_only_{timestring}.csv"
             record_row = [job_name, argparse_flag, params, time_python, time_terminal_real, time_terminal_user, time_terminal_sys]
             file_exists = os.path.isfile(records_csv_path)
 
