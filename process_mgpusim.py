@@ -4,8 +4,9 @@ import re
 import shutil
 import csv
 import time
+import argparse
 
-from utils import get_now_string
+from utils import get_now_string, generate_avg_csv, parse_time_output
 
 def mgpusim_virtual_time(setting_list, main_path):
     traces_dir = "./traces"
@@ -75,28 +76,12 @@ def mgpusim_virtual_time(setting_list, main_path):
         # Step 5: Print completion message
         print(f"[{idx + 1:02d}/{len(setting_list):02d}] Done: {sub_list}\n")
 
-
-def parse_time_output(time_output):
-    """Parse the output of the `time` command to extract 'real', 'user', and 'sys' times."""
-
-    def parse_time(label):
-        match = re.search(fr"{label}\s+(\d+)m([\d.]+)s", time_output)
-        if match:
-            minutes, seconds = int(match.group(1)), float(match.group(2))
-            return minutes * 60 + seconds
-        return None
-
-    time_real = parse_time("real")
-    time_user = parse_time("user")
-    time_sys = parse_time("sys")
-
-    return time_real, time_user, time_sys
-
-
-def mgpusim_real_time(setting_list, main_path, repeat_time=3):
+def mgpusim_real_time(setting_list, main_path, suffix, repeat_time=3):
     timestring = get_now_string()
     results_dir = "./results"
-    os.makedirs(results_dir, exist_ok=True)  
+    os.makedirs(results_dir, exist_ok=True)
+    records_csv_path = f"{results_dir}/mgpusim_records_real_time{f'_{suffix}' if suffix != '' else ''}_{timestring}.csv"
+
     for idx, sub_list in enumerate(setting_list):
         # Extract job details
         job_name, argparse_flag, params = sub_list
@@ -131,7 +116,7 @@ def mgpusim_real_time(setting_list, main_path, repeat_time=3):
 
             # print(f"result.stderr: '{result.stderr}'")
             time_terminal_real, time_terminal_user, time_terminal_sys = parse_time_output(result.stderr)  # Extract 'real' time
-            records_csv_path = f"{results_dir}/mgpusim_records_real_time_{timestring}.csv"
+            
             record_row = [job_name, argparse_flag[1:] if argparse_flag[0] == '-' else argparse_flag, params, time_python, time_terminal_real, time_terminal_user, time_terminal_sys]
             file_exists = os.path.isfile(records_csv_path)
 
@@ -143,6 +128,7 @@ def mgpusim_real_time(setting_list, main_path, repeat_time=3):
 
         # Step 5: Print completion message
         print(f"[{idx + 1:02d}/{len(setting_list):02d}] Done: {sub_list}\n")
+    generate_avg_csv(records_csv_path, ["job_name", "argparse_flag", "params"])
 
 
 if __name__ == "__main__":
@@ -179,4 +165,10 @@ if __name__ == "__main__":
     setting_list += [["spmv", "-dim", 2 ** i] for i in range(4, 12)]
 
     print(f"setting list count: {len(setting_list)}")
-    mgpusim_real_time(setting_list, main_path)
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--suffix', type=str, default="", help='Suffix to be loaded')
+    parser.add_argument('--repeat', type=int, default=3, help='Repeat times')
+    args = parser.parse_args()
+
+    mgpusim_real_time(setting_list, main_path, suffix=args.suffix, repeat_time=args.repeat)

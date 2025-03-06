@@ -1,7 +1,7 @@
 import pytz
 import pandas as pd
 import datetime
-
+import re
 
 def get_now_string(time_string="%Y%m%d_%H%M%S_%f"):
     # return datetime.datetime.now().strftime(time_string)
@@ -14,6 +14,22 @@ def get_now_string(time_string="%Y%m%d_%H%M%S_%f"):
     # Return the time in the desired format
     return est_now.strftime(time_string)
 
+
+def parse_time_output(time_output):
+    """Parse the output of the `time` command to extract 'real', 'user', and 'sys' times."""
+
+    def parse_time(label):
+        match = re.search(fr"{label}\s+(\d+)m([\d.]+)s", time_output)
+        if match:
+            minutes, seconds = int(match.group(1)), float(match.group(2))
+            return minutes * 60 + seconds
+        return None
+
+    time_real = parse_time("real")
+    time_user = parse_time("user")
+    time_sys = parse_time("sys")
+
+    return time_real, time_user, time_sys
 
 
 def generate_avg_csv(csv_file_path, group_target_list):

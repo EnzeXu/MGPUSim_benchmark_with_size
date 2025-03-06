@@ -4,8 +4,7 @@ import time
 import subprocess
 import argparse
 
-from utils import get_now_string, generate_avg_csv
-from process_mgpusim import parse_time_output
+from utils import get_now_string, generate_avg_csv, parse_time_output
 
 def pipesim_virtual_time(input_file_path, main_path):
     # Read all strings from the input file and save them in a list
