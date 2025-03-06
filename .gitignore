@@ -6,6 +6,9 @@ __pycache__/*
 from_server/*
 
 traces/*
+
 *.txt
 *.csv
 *.png
+
+!db_all.txt
