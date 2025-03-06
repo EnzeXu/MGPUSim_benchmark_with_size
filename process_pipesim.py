@@ -4,7 +4,7 @@ import time
 import subprocess
 import argparse
 
-from utils import get_now_string
+from utils import get_now_string, generate_avg_csv
 from process_mgpusim import parse_time_output
 
 def pipesim_virtual_time(input_file_path, main_path):
@@ -133,6 +133,7 @@ def pipesim_real_time(input_file_path, main_path, suffix, repeat_time=3):
                 print(f"Unexpected output format: {result.stdout}")
                 os.chdir(original_path)
                 continue
+            print(f"output_lines[0]: {output_lines[0]}\noutput_lines[1]: {output_lines[1]}")
             assert "ms" in output_lines[0] or "s" in output_lines[0]
             assert "ms" in output_lines[1] or "s" in output_lines[1]
             if "ms" in output_lines[0]:
@@ -169,6 +170,7 @@ def pipesim_real_time(input_file_path, main_path, suffix, repeat_time=3):
 
         print(f"[{index:02d}/{total_files:02d}] Finish: {one_str}")
         print()
+    generate_avg_csv(records_file, ["job_name", "argparse_flag", "params"])
 
 
 

@@ -62,7 +62,7 @@ def mgpusim_virtual_time(setting_list, main_path):
         kernel_time = float(metrics_lines[1].split(",")[-1].strip())
         total_time = float(metrics_lines[2].split(",")[-1].strip())
 
-        records_csv_path = f"{results_dir}/mgpusim_records_{timestring}.csv"  # os.path.join(traces_dir, "records.csv")
+        records_csv_path = f"{results_dir}/mgpusim_records_virtual_time_{timestring}.csv"  # os.path.join(traces_dir, "records.csv")
         record_row = [job_name, argparse_flag, params, trace_size, kernel_time, total_time]
         file_exists = os.path.isfile(records_csv_path)
 
@@ -131,7 +131,7 @@ def mgpusim_real_time(setting_list, main_path, repeat_time=3):
 
             # print(f"result.stderr: '{result.stderr}'")
             time_terminal_real, time_terminal_user, time_terminal_sys = parse_time_output(result.stderr)  # Extract 'real' time
-            records_csv_path = f"{results_dir}/mgpusim_records_time_only_{timestring}.csv"
+            records_csv_path = f"{results_dir}/mgpusim_records_real_time_{timestring}.csv"
             record_row = [job_name, argparse_flag[1:] if argparse_flag[0] == '-' else argparse_flag, params, time_python, time_terminal_real, time_terminal_user, time_terminal_sys]
             file_exists = os.path.isfile(records_csv_path)
 
