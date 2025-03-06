@@ -133,21 +133,30 @@ def pipesim_real_time(input_file_path, main_path, suffix, repeat_time=3):
                 print(f"Unexpected output format: {result.stdout}")
                 os.chdir(original_path)
                 continue
-            print(f"output_lines[0]: {output_lines[0]}\noutput_lines[1]: {output_lines[1]}")
-            print(output_lines)
-            assert "ms" in output_lines[0] or "s" in output_lines[0]
-            assert "ms" in output_lines[1] or "s" in output_lines[1]
-            if "ms" in output_lines[0]:
-                init_time = float(output_lines[0].split(":")[1].strip().replace("ms", "")) / 1000
+            # print(f"output_lines[0]: {output_lines[0]}\noutput_lines[1]: {output_lines[1]}")
+            # print(output_lines)
+            def find_first_ms_index(input_list):
+                for idx, element in enumerate(input_list):
+                    if "ms" in element:
+                        return idx
+                return -1
+            start_index = find_first_ms_index(output_lines)
+            assert start_index != -1
+            init_time_string, run_time_string, virtual_time_string = output_lines[start_index], output_lines[start_index + 1], output_lines[start_index + 2]
+            assert "ms" in init_time_string or "s" in init_time_string
+            assert "ms" in run_time_string or "s" in run_time_string
+            
+            if "ms" in init_time_string:
+                init_time = float(init_time_string.split(":")[1].strip().replace("ms", "")) / 1000
             else:
-                init_time = float(output_lines[0].split(":")[1].strip().replace("s", ""))
+                init_time = float(init_time_string.split(":")[1].strip().replace("s", ""))
 
-            if "ms" in output_lines[1]:
-                run_time = float(output_lines[1].split(":")[1].strip().replace("ms", "")) / 1000
+            if "ms" in run_time_string:
+                run_time = float(run_time_string.split(":")[1].strip().replace("ms", "")) / 1000
             else:
-                run_time = float(output_lines[1].split(":")[1].strip().replace("s", ""))
+                run_time = float(run_time_string.split(":")[1].strip().replace("s", ""))
 
-            virtual_time = float(output_lines[2].split(":")[1].strip())
+            virtual_time = float(virtual_time_string.split(":")[1].strip())
 
             result = subprocess.run(
                 time_command,
