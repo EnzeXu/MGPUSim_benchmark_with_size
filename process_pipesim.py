@@ -12,7 +12,10 @@ def pipesim_virtual_time(input_file_path, main_path):
         file_list = [line.strip() for line in file if line.strip()]
 
     # Prepare the output file
-    records_file = f"pipesim_records_{get_now_string()}.csv"
+    timestring = get_now_string()
+    results_dir = "./results"
+    os.makedirs(results_dir, exist_ok=True)  
+    records_file = f"{results_dir}/pipesim_records_{timestring}.csv"
     if not os.path.exists(records_file):
         with open(records_file, "w") as f:
             f.write("job_name,argparse_flag,params,init_time,run_time,virtual_time\n")
@@ -76,12 +79,15 @@ def pipesim_virtual_time(input_file_path, main_path):
 
 
 def pipesim_real_time(input_file_path, main_path, repeat_time=3):
+    timestring = get_now_string()
+    results_dir = "./results"
+    os.makedirs(results_dir, exist_ok=True)  
     # Read all strings from the input file and save them in a list
     with open(input_file_path, "r") as file:
         file_list = [line.strip() for line in file if line.strip()]
 
     # Prepare the output file
-    records_file = f"pipesim_records_time_only_{get_now_string()}.csv"
+    records_file = f"{results_dir}/pipesim_records_time_only_{timestring}.csv"
     if not os.path.exists(records_file):
         with open(records_file, "w") as f:
             f.write("job_name,argparse_flag,params,time_python,time_terminal_real,time_terminal_user,time_terminal_sys,init_time,run_time,virtual_time\n")
