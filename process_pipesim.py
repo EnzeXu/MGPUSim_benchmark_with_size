@@ -79,7 +79,7 @@ def pipesim_virtual_time(input_file_path, main_path):
         print()
 
 
-def pipesim_real_time(input_file_path, main_path, repeat_time=3):
+def pipesim_real_time(input_file_path, main_path, suffix, repeat_time=3):
     timestring = get_now_string()
     results_dir = "./results"
     os.makedirs(results_dir, exist_ok=True)  
@@ -88,7 +88,7 @@ def pipesim_real_time(input_file_path, main_path, repeat_time=3):
         file_list = [line.strip() for line in file if line.strip()]
 
     # Prepare the output file
-    records_file = f"{results_dir}/pipesim_records_real_time_{timestring}.csv"
+    records_file = f"{results_dir}/pipesim_records_real_time{f'_{suffix}' if suffix != '' else ''}_{timestring}.csv"
     if not os.path.exists(records_file):
         with open(records_file, "w") as f:
             f.write("job_name,argparse_flag,params,time_python,time_terminal_real,time_terminal_user,time_terminal_sys,init_time,run_time,virtual_time\n")
