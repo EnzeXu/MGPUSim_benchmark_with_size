@@ -136,11 +136,11 @@ def pipesim_real_time(input_file_path, main_path, suffix, repeat_time=3):
             # print(output_lines)
             def find_first_ms_index(input_list):
                 for idx, element in enumerate(input_list):
-                    if "ms" in element:
+                    if "ms" in element or "s" in element:
                         return idx
                 return -1
             start_index = find_first_ms_index(output_lines)
-            assert start_index != -1
+            assert start_index != -1, f"ms or s not found in {str(output_lines)}"
             init_time_string, run_time_string, virtual_time_string = output_lines[start_index], output_lines[start_index + 1], output_lines[start_index + 2]
             assert "ms" in init_time_string or "s" in init_time_string
             assert "ms" in run_time_string or "s" in run_time_string
