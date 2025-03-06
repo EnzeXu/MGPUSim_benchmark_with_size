@@ -6,7 +6,7 @@ import subprocess
 from utils import get_now_string
 from process_mgpusim import parse_time_output
 
-def one_time_pipesim(input_file_path, main_path):
+def pipesim_virtual_time(input_file_path, main_path):
     # Read all strings from the input file and save them in a list
     with open(input_file_path, "r") as file:
         file_list = [line.strip() for line in file if line.strip()]
@@ -66,7 +66,7 @@ def one_time_pipesim(input_file_path, main_path):
         os.chdir(original_path)
 
         # Write the record to the file
-        record = f"{job_name},{argparse_flag},{params},{init_time},{run_time},{virtual_time}\n"
+        record = f"{job_name},{argparse_flag[1:] if argparse_flag[0] == '-' else argparse_flag},{params},{init_time},{run_time},{virtual_time}\n"
         with open(records_file, "a") as f:
             f.write(record)
 
@@ -75,9 +75,7 @@ def one_time_pipesim(input_file_path, main_path):
         print()
 
 
-
-
-def one_time_pipesim_time_only(input_file_path, main_path, repeat_time=3):
+def pipesim_real_time(input_file_path, main_path, repeat_time=3):
     # Read all strings from the input file and save them in a list
     with open(input_file_path, "r") as file:
         file_list = [line.strip() for line in file if line.strip()]
@@ -154,7 +152,7 @@ def one_time_pipesim_time_only(input_file_path, main_path, repeat_time=3):
             time_terminal_real, time_terminal_user, time_terminal_sys = parse_time_output(result.stderr)
 
             # Write the record to the file
-            record = f"{job_name},{argparse_flag},{params},{time_python},{time_terminal_real},{time_terminal_user},{time_terminal_sys},{init_time},{run_time},{virtual_time}\n"
+            record = f"{job_name},{argparse_flag[1:] if argparse_flag[0] == '-' else argparse_flag},{params},{time_python},{time_terminal_real},{time_terminal_user},{time_terminal_sys},{init_time},{run_time},{virtual_time}\n"
             print(record)
             os.chdir(original_path)
             with open(records_file, "a") as f:
@@ -168,5 +166,5 @@ def one_time_pipesim_time_only(input_file_path, main_path, repeat_time=3):
 
 
 if __name__ == "__main__":
-    # one_time_pipesim("./db.txt", "../pipesim/")
-    one_time_pipesim_time_only("./db.txt", "../pipesim/")
+    # pipesim_virtual_time("./db.txt", "../pipesim/")
+    pipesim_real_time("./db.txt", "../pipesim/")

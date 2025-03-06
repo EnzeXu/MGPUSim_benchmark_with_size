@@ -7,7 +7,7 @@ import time
 
 from utils import get_now_string
 
-def one_time_process(setting_list, main_path):
+def mgpusim_virtual_time(setting_list, main_path):
     traces_dir = "./traces"
     os.makedirs(traces_dir, exist_ok=True)  # Create the traces directory if it doesn't exist
 
@@ -90,7 +90,7 @@ def parse_time_output(time_output):
     return time_real, time_user, time_sys
 
 
-def one_time_process_time_only(setting_list, main_path, repeat_time=3):
+def mgpusim_real_time(setting_list, main_path, repeat_time=3):
     timestring = get_now_string()
     for idx, sub_list in enumerate(setting_list):
         # Extract job details
@@ -127,7 +127,7 @@ def one_time_process_time_only(setting_list, main_path, repeat_time=3):
             # print(f"result.stderr: '{result.stderr}'")
             time_terminal_real, time_terminal_user, time_terminal_sys = parse_time_output(result.stderr)  # Extract 'real' time
             records_csv_path = f"./mgpusim_records_time_only_{timestring}.csv"
-            record_row = [job_name, argparse_flag, params, time_python, time_terminal_real, time_terminal_user, time_terminal_sys]
+            record_row = [job_name, argparse_flag[1:] if argparse_flag[0] == '-' else argparse_flag, params, time_python, time_terminal_real, time_terminal_user, time_terminal_sys]
             file_exists = os.path.isfile(records_csv_path)
 
             with open(records_csv_path, "a", newline="") as records_file:
@@ -144,23 +144,23 @@ if __name__ == "__main__":
     main_path = "../mgpusim/samples"
 
     # setting_list = [["relu", "-length", 2 ** i] for i in range(10, 20)]
-    # one_time_process(setting_list, main_path)
+    # one_time_process_virtual_time(setting_list, main_path)
     # setting_list = [["fir", "-length", 2 ** i] for i in range(7, 17)]
-    # one_time_process(setting_list, main_path)
+    # one_time_process_virtual_time(setting_list, main_path)
     # setting_list = [["matrixtranspose", "-width", 2 ** i] for i in range(2, 10)]
-    # one_time_process(setting_list, main_path)
+    # one_time_process_virtual_time(setting_list, main_path)
     # setting_list = [["spmv", "-dim", 2 ** i] for i in range(4, 12)]
-    # one_time_process(setting_list, main_path)
+    # one_time_process_virtual_time(setting_list, main_path)
     # setting_list = [["kmeans", "-points", 2 ** i] for i in range(3, 11)]
-    # one_time_process(setting_list, main_path)
+    # one_time_process_virtual_time(setting_list, main_path)
     # setting_list = [["matrixmultiplication", "-x", 2 ** i] for i in range(3, 13)]
-    # one_time_process(setting_list, main_path)
+    # one_time_process_virtual_time(setting_list, main_path)
     # setting_list = [["bfs", "-node", 2 ** i] for i in range(5, 15)]
-    # one_time_process(setting_list, main_path)
+    # one_time_process_virtual_time(setting_list, main_path)
     # setting_list = [["pagerank", "-node", 2 ** i] for i in range(1, 9)]
-    # one_time_process(setting_list, main_path)
+    # one_time_process_virtual_time(setting_list, main_path)
     # setting_list = [["pagerank", "-iterations", 2 ** i] for i in range(0, 10)]
-    # one_time_process(setting_list, main_path)
+    # one_time_process_virtual_time(setting_list, main_path)
 
     setting_list = []
     setting_list += [["bfs", "-node", 2 ** i] for i in range(5, 15)]
@@ -174,4 +174,4 @@ if __name__ == "__main__":
     setting_list += [["spmv", "-dim", 2 ** i] for i in range(4, 12)]
 
     print(f"setting list count: {len(setting_list)}")
-    one_time_process_time_only(setting_list, main_path)
+    mgpusim_real_time(setting_list, main_path)
