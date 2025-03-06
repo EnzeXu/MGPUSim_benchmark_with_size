@@ -136,7 +136,7 @@ def pipesim_real_time(input_file_path, main_path, suffix, repeat_time=3):
             # print(output_lines)
             def find_first_ms_index(input_list):
                 for idx, element in enumerate(input_list):
-                    if "ms" in element or "s" in element:
+                    if element[-2:] == "ms" or element[-1:] == "s":
                         return idx
                 return -1
             start_index = find_first_ms_index(output_lines)
