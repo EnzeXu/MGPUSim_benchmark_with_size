@@ -134,6 +134,7 @@ def pipesim_real_time(input_file_path, main_path, suffix, repeat_time=3):
                 os.chdir(original_path)
                 continue
             print(f"output_lines[0]: {output_lines[0]}\noutput_lines[1]: {output_lines[1]}")
+            print(output_lines)
             assert "ms" in output_lines[0] or "s" in output_lines[0]
             assert "ms" in output_lines[1] or "s" in output_lines[1]
             if "ms" in output_lines[0]:
