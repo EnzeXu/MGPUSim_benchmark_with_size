@@ -2,6 +2,7 @@ import os
 import re
 import time
 import subprocess
+import argparse
 
 from utils import get_now_string
 from process_mgpusim import parse_time_output
@@ -15,7 +16,7 @@ def pipesim_virtual_time(input_file_path, main_path):
     timestring = get_now_string()
     results_dir = "./results"
     os.makedirs(results_dir, exist_ok=True)  
-    records_file = f"{results_dir}/pipesim_records_{timestring}.csv"
+    records_file = f"{results_dir}/pipesim_records_virtual_time_{timestring}.csv"
     if not os.path.exists(records_file):
         with open(records_file, "w") as f:
             f.write("job_name,argparse_flag,params,init_time,run_time,virtual_time\n")
@@ -87,7 +88,7 @@ def pipesim_real_time(input_file_path, main_path, repeat_time=3):
         file_list = [line.strip() for line in file if line.strip()]
 
     # Prepare the output file
-    records_file = f"{results_dir}/pipesim_records_time_only_{timestring}.csv"
+    records_file = f"{results_dir}/pipesim_records_real_time_{timestring}.csv"
     if not os.path.exists(records_file):
         with open(records_file, "w") as f:
             f.write("job_name,argparse_flag,params,time_python,time_terminal_real,time_terminal_user,time_terminal_sys,init_time,run_time,virtual_time\n")
@@ -173,4 +174,9 @@ def pipesim_real_time(input_file_path, main_path, repeat_time=3):
 
 if __name__ == "__main__":
     # pipesim_virtual_time("./db.txt", "../pipesim/")
-    pipesim_real_time("./db.txt", "../pipesim/")
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--suffix', type=str, default="", help='Suffix to be loaded')
+    parser.add_argument('--repeat', type=int, default=3, help='Repeat times')
+    args = parser.parse_args()
+
+    pipesim_real_time("./db.txt", "../pipesim/", suffix=args.suffix, repeat_time=args.repeat)
