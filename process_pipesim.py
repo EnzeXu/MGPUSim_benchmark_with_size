@@ -142,8 +142,8 @@ def pipesim_real_time(input_file_path, main_path, suffix, repeat_time=3):
             start_index = find_first_ms_index(output_lines)
             assert start_index != -1, f"ms or s not found in {str(output_lines)}"
             init_time_string, run_time_string, virtual_time_string = output_lines[start_index], output_lines[start_index + 1], output_lines[start_index + 2]
-            assert "ms" in init_time_string or "s" in init_time_string
-            assert "ms" in run_time_string or "s" in run_time_string
+            assert "ms" in init_time_string or "s" in init_time_string, f"ms or s not found in {str(output_lines)}"
+            assert "ms" in run_time_string or "s" in run_time_string, f"ms or s not found in {str(output_lines)}"
             
             if "ms" in init_time_string:
                 init_time = float(init_time_string.split(":")[1].strip().replace("ms", "")) / 1000
