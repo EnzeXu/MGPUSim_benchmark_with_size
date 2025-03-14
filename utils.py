@@ -51,4 +51,4 @@ def generate_avg_csv(csv_file_path, group_target_list):
 
 
 if __name__ == "__main__":
-    generate_avg_csv("results/mgpusim_records_time_only_20250306_160656_843574.csv", ["job_name", "argparse_flag", "params"])
+    generate_avg_csv("results_v3/mgpusim_records_real_time_20250306_160656_843574.csv", ["job_name", "argparse_flag", "params"])

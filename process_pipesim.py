@@ -78,7 +78,7 @@ def pipesim_virtual_time(input_file_path, main_path):
         print()
 
 
-def pipesim_real_time(input_file_path, main_path, suffix, repeat_time=3):
+def pipesim_real_time(input_file_path, main_path, suffix, repeat_time=3, disable_what=False):
     timestring = get_now_string()
     results_dir = "./results"
     os.makedirs(results_dir, exist_ok=True)  
@@ -114,6 +114,8 @@ def pipesim_real_time(input_file_path, main_path, suffix, repeat_time=3):
         # Run the go command
         # command = f"go run pipesim/main.go -database {one_str} -config=config.json"
         command = f"./pipesim/pipesim -database {one_str} -config=config.json"
+        if disable_what:
+            command = command + " -disableWhat"
         time_command = f"time {command}"
         print(f"[{index:02d}/{total_files:02d}] Command: {command}")
         print(f"[{index:02d}/{total_files:02d}] Time Command: {time_command}")
@@ -144,16 +146,31 @@ def pipesim_real_time(input_file_path, main_path, suffix, repeat_time=3):
             init_time_string, run_time_string, virtual_time_string = output_lines[start_index], output_lines[start_index + 1], output_lines[start_index + 2]
             assert "ms" in init_time_string or "s" in init_time_string, f"ms or s not found in {str(output_lines)}"
             assert "ms" in run_time_string or "s" in run_time_string, f"ms or s not found in {str(output_lines)}"
-            
-            if "ms" in init_time_string:
-                init_time = float(init_time_string.split(":")[1].strip().replace("ms", "")) / 1000
-            else:
-                init_time = float(init_time_string.split(":")[1].strip().replace("s", ""))
 
-            if "ms" in run_time_string:
-                run_time = float(run_time_string.split(":")[1].strip().replace("ms", "")) / 1000
-            else:
-                run_time = float(run_time_string.split(":")[1].strip().replace("s", ""))
+            def convert_string_to_time(time_string):
+                if "ms" in time_string:
+                    time_float = float(time_string.split(":")[1].strip().replace("ms", "")) / 1000
+                else:
+                    time_string_sec = time_string.split(":")[1].strip().replace("s", "")
+                    if "m" not in time_string_sec:
+                        time_float = float(time_string_sec)
+                    else:
+                        time_string_sec_parts = time_string_sec.split("m")
+                        assert len(time_string_sec_parts) == 2
+                        time_float = float(time_string_sec_parts[0]) * 60 + float(time_string_sec_parts[1])
+                return time_float
+            
+            init_time = convert_string_to_time(init_time_string)
+            run_time = convert_string_to_time(run_time_string)
+            # if "ms" in init_time_string:
+            #     init_time = float(init_time_string.split(":")[1].strip().replace("ms", "")) / 1000
+            # else:
+            #     init_time = float(init_time_string.split(":")[1].strip().replace("s", ""))
+
+            # if "ms" in run_time_string:
+            #     run_time = float(run_time_string.split(":")[1].strip().replace("ms", "")) / 1000
+            # else:
+            #     run_time = float(run_time_string.split(":")[1].strip().replace("s", ""))
 
             virtual_time = float(virtual_time_string.split(":")[1].strip())
 
@@ -185,9 +202,11 @@ def pipesim_real_time(input_file_path, main_path, suffix, repeat_time=3):
 
 if __name__ == "__main__":
     # pipesim_virtual_time("./db.txt", "../pipesim/")
+    # python -u process_pipesim.py --suffix sequential
     parser = argparse.ArgumentParser()
     parser.add_argument('--suffix', type=str, default="", help='Suffix to be loaded')
     parser.add_argument('--repeat', type=int, default=3, help='Repeat times')
+    parser.add_argument('--disableWhat', action='store_true', default=False, help='Disable where-kind-what')
     args = parser.parse_args()
 
-    pipesim_real_time("./db.txt", "../pipesim/", suffix=args.suffix, repeat_time=args.repeat)
+    pipesim_real_time("./db.txt", "../pipesim/", suffix=args.suffix, repeat_time=args.repeat, disable_what=args.disableWhat)
